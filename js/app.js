@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-=======
 
-
->>>>>>> 4cbaa6212241d88e81ee762725ae2f07a182b233
 var x, y, i;
 var startDraggingX, stopDraggingX, directionX;
 var startDraggingY, stopDraggingY, directionY;
