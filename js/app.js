@@ -1,10 +1,9 @@
-
 var x, y, i;
 var startDraggingX, stopDraggingX, directionX;
 var startDraggingY, stopDraggingY, directionY;
 
 var slides = $('#slider .first-line').children().length;
-    sliderWidth = $('#slider').width(),
+sliderWidth = $('#slider').width(),
     sliderHeight = $('#slider').height(),
     heightMin = 40,
     stringCounter = $("#slider ul > div").length,
@@ -15,15 +14,19 @@ var slides = $('#slider .first-line').children().length;
 var rightNavigation = [],
     bottomNavigation = [];
 
-init();
+var uiStartPositionLeft, uiFinishPositionLeft;
+var uiStartPositionTop, uiFinishPositionTop;
+
+init(); //Slider initialization
 
 $("#slider ul").draggable({
     start: function (event, ui) {
         x = event.pageX;
         y = event.pageY;
-
         startDraggingX = ui.position.left; //Start of draging
         startDraggingY = ui.position.top;
+        uiStartPositionLeft = (ui.position.left).roundTo(sliderWidth);
+        uiStartPositionTop = (ui.position.top).roundTo(sliderHeight);
     },
     drag: function (event, ui) {
         if (x && y) {
@@ -36,9 +39,10 @@ $("#slider ul").draggable({
         if (ui.position.left > widthMin) {
             ui.position.left = widthMin;
 
-        } else if (ui.position.left < widthMax){
+        } else if (ui.position.left < widthMax) {
             ui.position.left = widthMax;
         }
+
         if (ui.position.top > heightMin) {
             ui.position.top = heightMin;
         }
@@ -53,12 +57,20 @@ $("#slider ul").draggable({
         directionX = ((startDraggingX < stopDraggingX) ? 'right' : 'left'); // If startDragging is lower than stopDragging than direction if right
         directionY = ((startDraggingY < stopDraggingY) ? 'down' : 'up');
         insert(directionX, directionY);
+
     },
     stop: function (event, ui) {
         //move the page if it is not equal to the border
         x = y = null;
-        $(this).animate({'left': (ui.position.left).roundTo(sliderWidth)}, "fast");
-        $(this).animate({'top': (ui.position.top).roundTo(sliderHeight)}, "fast");
+
+        $(this).animate({'left': (ui.position.left).roundTo(sliderWidth)}, "fast", function () {
+            uiFinishPositionLeft = (ui.position.left).roundTo(sliderWidth);
+            getPages(uiStartPositionLeft, uiFinishPositionLeft, "marker-bottom");
+        });
+        $(this).animate({'top': (ui.position.top).roundTo(sliderHeight)}, "fast", function () {
+            uiFinishPositionTop = (ui.position.top).roundTo(sliderHeight);
+            getPages(uiStartPositionTop, uiFinishPositionTop, "marker-right");
+        });
     }
 });
 
@@ -115,22 +127,31 @@ function getPage(e) {
     return $(event);
 }
 
+function getPages(start, finish, marker) {
+    if (start > finish) {
+        $("." + marker).removeClass(marker).next().addClass(marker);
+    } else if (start < finish) {
+        $("." + marker).removeClass(marker).prev().addClass(marker);
+    }
+}
 
 Number.prototype.roundTo = function (nTo) {
     nTo = nTo || 10;
     return Math.round(this * (1 / nTo)) * nTo;
 }
 
-function init(){
+function init() {
     for (i = 0; i < stringCounter; i++) {
-        rightNavigation.push("<li class='right-marker-" + i + "'></li>")
+        rightNavigation.push("<li></li>")
     }
     $(".right-navigation").append(rightNavigation);
 
     for (i = 0; i < slides; i++) {
-        bottomNavigation.push("<li class='bottom-marker-" + i + "'></li>")
+        bottomNavigation.push("<li ></li>")
     }
     $(".bottom-navigation").append(bottomNavigation);
-
     $("#slider").height($("body").height());
+    $(".bottom-navigation li:eq(0)").addClass("marker-bottom");
+    $(".right-navigation li:eq(0)").addClass("marker-right");
 }
+
