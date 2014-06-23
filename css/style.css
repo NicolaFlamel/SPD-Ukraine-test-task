@@ -47,7 +47,7 @@ ul {
 }
 
 .right-navigation li, .bottom-navigation li {
-    box-shadow: inset 0 0 30px -2px black;
+    box-shadow: inset 0 0 10px -2px black;
 }
 
 .right-navigation li:after, .bottom-navigation li:after {
@@ -91,5 +91,5 @@ ul {
 }
 
 .marker-bottom, .marker-right {
-    background: #c67605;
+    background: white;
 }
