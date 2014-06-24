@@ -151,7 +151,6 @@ function init() {
     }
     $(".bottom-navigation").append(bottomNavigation);
     
-    $("#slider").height($("body").height());
     $(".bottom-navigation li:eq(0)").addClass("marker-bottom");
     $(".right-navigation li:eq(0)").addClass("marker-right");
 }
