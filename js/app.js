@@ -98,9 +98,7 @@
                 });
             }
             createRightNavigation(stringCounter);
-
             $(".bottom-navigation:eq(0)").addClass("visible-navigation");
-
             $(".bottom-navigation").css({
                 left: 60,
                 bottom: 20
@@ -143,9 +141,11 @@
     function createRightNavigation(width) {
         var i
         var rightNavigation = []
+
         for (i = 0; i < width; i++) {
             rightNavigation.push("<li></li>");
         }
+
         $(".right-navigation ul").append(rightNavigation);
         $(".right-navigation li:eq(0)").addClass("marker");
     }
