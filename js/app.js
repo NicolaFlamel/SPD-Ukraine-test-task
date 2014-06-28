@@ -1,6 +1,7 @@
-;(function ($) {
+;
+(function ($) {
 
-    var carousel = new Carousel("carousel.json");
+    var carousel = new Carousel("info/carousel.json");
 
     var x, y,
         startDraggingX,
@@ -24,9 +25,14 @@
     function Carousel(infoFile) {
         $.getJSON(infoFile, function (data) {
             for (counter in data) {
+
                 addPage(data[counter]);
+
+                createBottomNavigation(data[counter].className);
+
                 stringCounter = $(" #slider  ul ").length;
-                slides = $(" #slider " + "." + data[counter].className + " li ").length,
+                slides = $(" #slider " + "#" + data[counter].className + "> li ").length,
+                console.log(slides);
                 sliderWidth = $('#slider').width();
                 sliderHeight = $('#slider').height();
                 heightMin = 40;
@@ -73,7 +79,8 @@
                                     stop: function (event, ui) {
                                         $(this).animate({'top': roundTo(ui.position.top, sliderHeight)}, "fast", function () {
                                             uiFinishPositionTop = roundTo(ui.position.top, sliderHeight);
-                                            getPages(uiStartPositionTop, uiFinishPositionTop, "marker-right");
+                                            getPage(uiStartPositionTop, uiFinishPositionTop, ".right-navigation .marker");
+                                            getPages(uiStartPositionTop, uiFinishPositionTop, $(".visible-navigation").parent());
                                         });
                                         $("#slider ul").draggable({disabled: false});
                                     }
@@ -84,15 +91,22 @@
                     stop: function (event, ui) {
                         $(this).animate({'left': roundTo(ui.position.left, sliderWidth)}, "fast", function () {
                             uiFinishPositionLeft = roundTo(ui.position.left, sliderWidth);
-                            getPages(uiStartPositionLeft, uiFinishPositionLeft, "marker-bottom");
+                            getPage(uiStartPositionLeft, uiFinishPositionLeft, "#" + ui.helper[0].id + " .marker");
                         });
                         $("#slider").draggable({disabled: false});
                     }
                 });
             }
-            getPage(stringCounter);
-        });
+            createRightNavigation(stringCounter);
 
+            $(".bottom-navigation:eq(0)").addClass("visible-navigation");
+
+            $(".bottom-navigation").css({
+                left: 60,
+                bottom: 20
+            });
+
+        });
     }
 
     function roundTo(object, size) {
@@ -101,27 +115,54 @@
     }
 
     function addPage(data) {
-        $("#slider").append("<ul class= " + data.className + ">" + data.content + "</ul>");
+        $("#slider").append("<ul id= " + data.className + ">" + data.content + "</ul>");
     }
 
-    function getPages(start, finish, marker) {
+    function getPage(start, finish, marker) {
         if (start > finish) {
-            $("." + marker).removeClass(marker).next().addClass(marker);
+            $(marker).removeClass("marker").next().addClass("marker");
+
         } else if (start < finish) {
-            $("." + marker).removeClass(marker).prev().addClass(marker);
+            $(marker).removeClass("marker").prev().addClass("marker");
         }
     }
 
-    function getPage(width) {
+    function getPages(start, finish, marker) {
+        var nextNav, prevNav;
+        if (start > finish) {
+            nextNav = $(marker).next()[0].lastChild;
+            $("*").removeClass("visible-navigation");
+            $(nextNav).addClass("visible-navigation");
+        } else if (start < finish) {
+            prevNav = $(marker).prev()[0].lastChild;
+            $("*").removeClass("visible-navigation");
+            $(prevNav).addClass("visible-navigation");
+        }
+    }
+
+    function createRightNavigation(width) {
         var i
         var rightNavigation = []
         for (i = 0; i < width; i++) {
             rightNavigation.push("<li></li>");
         }
         $(".right-navigation ul").append(rightNavigation);
-        $(".right-navigation li:eq(0)").addClass("marker-right");
+        $(".right-navigation li:eq(0)").addClass("marker");
     }
 
+    function createBottomNavigation(className) {
+        var i, counter;
+        var nav = [];
+
+        for (i = 0, counter = $("#" + className + " li ").length; i < counter; i++) {
+            nav.push("<li style='width:40px;height:40px;'></li>");
+        }
+
+        $("#" + className).append("<div class='bottom-navigation'></div>");
+        $("#" + className + " .bottom-navigation").append(nav);
+        $("#" + className + " .bottom-navigation li:eq(0)").addClass("marker");
+
+    }
 
     $(window).resize(function () {
         $('#wrapper').css({
