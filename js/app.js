@@ -1,7 +1,7 @@
 ;
 (function ($) {
 
-    var carousel = new Carousel("info/carousel.json");
+    var carousel = new Carousel("carousel.json");
 
     var x, y,
         startDraggingX,
