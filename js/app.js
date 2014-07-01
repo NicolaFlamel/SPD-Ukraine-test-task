@@ -32,7 +32,6 @@
 
                 stringCounter = $(" #slider  ul ").length;
                 slides = $(" #slider " + "#" + data[counter].className + "> li ").length,
-                console.log(slides);
                 sliderWidth = $('#slider').width();
                 sliderHeight = $('#slider').height();
                 heightMin = 40;
